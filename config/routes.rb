@@ -7,6 +7,8 @@ Calcentral::Application.routes.draw do
 
   root :to => 'bootstrap#index'
 
+  get '/api/timeout_simulation/:timeout' => 'timeout_simulation#get', :defaults => {:format => 'json'}
+
   # User management/status endpoints, currently used by all services.
   get '/api/my/am_i_logged_in' => 'user#am_i_logged_in', :as => :am_i_logged_in, :defaults => { :format => 'json' }
   get '/api/my/status' => 'user#my_status', :defaults => { :format => 'json' }

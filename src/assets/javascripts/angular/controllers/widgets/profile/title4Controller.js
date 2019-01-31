@@ -10,7 +10,8 @@ angular.module('calcentral.controllers').controller('Title4Controller', function
   };
 
   var sendEvent = function() {
-    $rootScope.$broadcast('calcentral.custom.api.finaid.approvals');
+    // $rootScope.$broadcast('calcentral.custom.api.finaid.approvals');
+    $rootScope.$broadcast('bingo');
   };
 
   $scope.sendResponseT4 = function(response) {
@@ -32,7 +33,8 @@ angular.module('calcentral.controllers').controller('Title4Controller', function
 
   getTitle4();
 
-  $scope.$on('calcentral.custom.api.finaid.approvals', function() {
+  // $scope.$on('calcentral.custom.api.finaid.approvals', function() {
+  $scope.$on('bingo', function() {
     getTitle4({
       refreshCache: true
     });

@@ -62,7 +62,7 @@ module FinancialAid
     end
 
     def success?
-      my_aid_year.present? ? (status || level || enrollment || residency || isir) && (title4 && terms_and_conditions) : false
+      my_aid_year.present? ? (level || enrollment || residency || isir) && (status && title4 && terms_and_conditions) : false
     end
 
     def subvaluesLevel
@@ -165,12 +165,12 @@ module FinancialAid
             value: isir.try(:[], 'primary_efc')
           },
           {
-            title: 'Summer EFC',
-            value: isir.try(:[], 'summer_efc')
-          },
-          {
             title: 'Berkeley Parent Contribution',
             value: status.try(:[], 'berkeley_pc')
+          },
+          {
+            title: 'Summer EFC',
+            value: isir.try(:[], 'summer_efc')
           },
           {
             title: 'Family Members in College',
@@ -220,7 +220,7 @@ module FinancialAid
           itemGroups: itemGroupsProfile
         },
         {
-          title: 'Agreements',
+          title: 'Terms & Conditions / Update Title IV',
           itemGroups: itemGroupsAgreements
         }
       ]

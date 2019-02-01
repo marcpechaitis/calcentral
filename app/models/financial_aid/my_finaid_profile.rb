@@ -218,12 +218,14 @@ module FinancialAid
         {
           title: status.try(:[], 'title'),
           itemGroups: itemGroupsProfile
-        },
-        {
-          title: 'Terms & Conditions / Update Title IV',
-          itemGroups: itemGroupsAgreements
         }
       ]
     end
   end
 end
+
+# ,
+#         {
+#           title: 'Terms & Conditions / Update Title IV',
+#           itemGroups: itemGroupsAgreements
+#         }

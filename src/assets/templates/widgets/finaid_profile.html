@@ -54,7 +54,24 @@
               </div>
           </div>
         </div>
-        <hr data-ng-if="!$last" aria-hidden="true">
+        
+      </div>
+
+      <hr aria-hidden="true">
+
+      <div class="cc-clearfix-container">
+        <h3 class="cc-page-finaid-header cc-left">
+          Terms & Conditions / Update Title IV
+        </h3>
+
+        <span>Togglebutton</span>
+
+        <a ng-if="api.user.profile.actAsOptions.canSeeCSLinks" href="/finances/finaid/t4/auth">
+          Update
+          <span class="cc-visuallyhidden" data-ng-bind="item.title"></span>
+        </a>
+
+        {{title4description}}
       </div>
     </div>
   </div>

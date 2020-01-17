@@ -5,6 +5,8 @@ import buildDataReducer from 'redux/build-data-reducer';
 import AcademicsReducer from './AcademicsReducer';
 import ActivitiesReducer from './ActivitiesReducer';
 import AdvisingReducer from './AdvisingReducer';
+import AwardComparisonReducer from './AwardComparisonReducer';
+import AwardComparisonSnapshotReducer from './AwardComparisonSnapshotReducer';
 import BillingItemsReducer from './BillingItemsReducer';
 import CarsDataReducer from './CarsDataReducer';
 import CalGrantsReducer from './CalGrantsReducer';
@@ -65,6 +67,8 @@ const myBCoursesTodos = buildDataReducer(
 
 const AppReducer = combineReducers({
   advising: AdvisingReducer,
+  awardComparison: AwardComparisonReducer,
+  awardComparisonSnapshot: AwardComparisonSnapshotReducer,
   config: ConfigReducer,
   currentRoute: RouteReducer,
   billingItems: BillingItemsReducer,

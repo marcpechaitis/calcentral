@@ -8,7 +8,7 @@ import CampusSolutionsOutboundLink from './CampusSolutionsOutboundLink';
 
 const propTypes = {
   linkObj: PropTypes.object.isRequired,
-  children: PropTypes.any.isRequired
+  children: PropTypes.any
 };
 
 class CampusSolutionsLinkContainer extends React.Component {

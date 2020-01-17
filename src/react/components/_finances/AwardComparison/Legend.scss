@@ -1,0 +1,111 @@
+@import '../../../stylesheets/colors';
+@import '../../../stylesheets/variables';
+
+// .icon-changed {
+//   background-image: url('/assets/images/changed.svg');
+//   background-position-y: center;
+//   background-repeat: no-repeat;
+//   background-size: 12px 11px;
+//   padding-left: 18px;
+//   color: $cc-color-dark-tangerine;
+// }
+.legend {
+  // .container {
+  //   display: flex;
+  //   border-bottom: 1px solid $light-gray;
+  //   // background-color: lightcoral;
+  //   padding: $medium-spacing;
+  //   margin-bottom: $large-spacing;
+  // }
+
+  .bigColumn {
+    flex-grow: 12;
+    // background-color: aquamarine;
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hideSmallFormFactor {
+    display: none;
+  }
+
+  .smallColumn {
+    display: flex;
+    flex-grow: 1.5;
+    justify-content: flex-end;
+    flex-direction: column;
+  }
+
+  .smallColumn {
+    display: flex;
+    flex-grow: 1.5;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .direction {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    white-space: pre;
+  }
+
+  .textStrong {
+    font-weight: bold;
+  }
+}
+@media only screen and (min-width: $small-breakpoint) {
+  .legend {
+    // .container {
+    //   display: flex;
+    //   border-bottom: 1px solid $light-gray;
+    //   justify-content: space-between;
+    //   // background-color: lightblue;
+    //   padding: 0 $medium-spacing $medium-spacing $medium-spacing;
+    //   margin-bottom: $large-spacing;
+    //   // max-width: 600px;
+    // }
+
+    .bigColumn {
+      flex-grow: 2;
+    }
+
+    .bigColumnText {
+      display: flex;
+      flex-direction: column;
+      padding-top: $medium-spacing;
+      width: max-content;
+      // background-color: antiquewhite;
+    }
+
+    // .icon {
+    //   display: flex;
+    //   justify-content: center;
+    //   height: 15px;
+    // }
+
+    .hideSmallFormFactor {
+      display: flex;
+    }
+
+    .smallColumn {
+      display: flex;
+      flex-grow: 1.5;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .direction {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+    }
+
+    .textStrong {
+      font-weight: bold;
+    }
+  }
+}

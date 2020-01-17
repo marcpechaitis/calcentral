@@ -1,0 +1,29 @@
+@import '../../../stylesheets/variables';
+
+.AwardComparisonDropdown {
+  .AwardComparisonDropdown__container {
+    width: 200px;
+  }
+}
+
+.AwardComparisonDropdown label {
+  font-weight: bold;
+  width: 300px;
+  line-height: 32px;
+  text-align: right;
+}
+
+.AwardComparisonDropdown select {
+  margin-left: 10px;
+  width: 300px;
+}
+
+@media only screen and (min-width: $small-breakpoint) {
+  .AwardComparisonDropdown {
+    display: flex;
+  }
+
+  .AwardComparisonDropdown select {
+    margin-left: 10px;
+  }
+}

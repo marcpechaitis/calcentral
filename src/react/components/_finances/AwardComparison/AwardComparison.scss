@@ -23,6 +23,13 @@
   .columnSmall {
     width: 25%;
     float: none;
+    // background-color: aqua;
+  }
+
+  .columnSmall + .columnSmall {
+    // width: 25%;
+    float: none;
+    // background-color: rebeccapurple;
   }
 
   .direction {
@@ -30,6 +37,10 @@
     flex-direction: column;
     align-items: flex-end;
     white-space: pre;
+  }
+
+  .gap {
+    margin-bottom: 20px;
   }
 
   .headerContainer {
@@ -68,12 +79,22 @@
     border-bottom: 1px solid $light-gray;
   }
 
+  .subvalueDescription {
+    background-color: green;
+    width: 250px;
+  }
+
+  // .subvalueTerm {
+  //   width: 10%;
+  // }
+
   .textStrong {
     font-weight: bold;
   }
 
   .valueCell {
     text-align: right;
+    width: 100%;
   }
 
   .valueCellChanged {
@@ -86,6 +107,37 @@
     text-align: right;
   }
 
+  .valueDescription {
+    width: 100%;
+  }
+
+  .subvalue {
+    padding: 0;
+  }
+
+  .subvalueCell {
+    // background-color: $cc-color-salem;
+    width: 40%;
+  }
+
+  .subvalueRow {
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+  }
+
+  .subvalueData {
+    padding: 0.6923076923rem 0.7692307692rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .subvalueTerm {
+    background-color: yellow;
+    width: 20%;
+  }
+
   hr {
     border-bottom: 1px solid $light-gray;
     margin: 0;
@@ -96,6 +148,7 @@
     border: none;
     border-bottom: 1px solid $light-gray;
     margin-bottom: 0;
+    table-layout: fixed;
     width: 100%;
 
     thead {
@@ -117,7 +170,88 @@
           background-color: $white;
           font-weight: normal;
         }
+
+        // td.subvalue {
+        //   padding: 0;
+        // }
+
+        th.typeTitle {
+          display: flex;
+          align-items: flex-end;
+          font-size: 11px;
+          font-weight: bold;
+          padding-bottom: 0;
+          position: absolute;
+          bottom: 0;
+          border-left: 1px solid $light-gray;
+        }
       }
+
+      // subvalue rows on the Profile section
+      // td {
+      //   table {
+      //     border: none;
+
+      //     tbody {
+      //       display: flex;
+      //       flex-direction: column;
+
+      //       tr {
+      //         border: none;
+      //         flex: 1;
+
+      //         th,
+      //         td {
+      //           padding: 0;
+      //           text-align: right;
+      //           height: 40px;
+      //           border: none;
+      //         }
+      //         th {
+      //           background-color: $cc-color-salem;
+      //           // width: 40%;
+      //         }
+      //         td {
+      //           background-color: $cc-color-charcoal;
+      //           // width: 50%;
+      //         }
+      //       }
+
+      //       tr:last-child {
+      //         border: none;
+      //       }
+      //     }
+      //   }
+      // }
+
+      // td.subvalueCell {
+      //   height: 40px;
+      //   width: 30%;
+      //   background-color: $cc-color-salem;
+      // }
+
+      th.subvalueDescription {
+        // width: 30%;
+        background-color: $cc-color-harley-davidson-orange;
+      }
+
+      tr.typeRow {
+        position: relative;
+        height: 40px;
+        border-bottom: 0;
+      }
+
+      tr.awardRow {
+        height: 40px;
+      }
+
+      tr.typeRow + .awardRow {
+        border-top: 0;
+      }
+
+      // tr.subvalueRow {
+      //   border: 0;
+      // }
 
       tr:last-child {
         border: 1px solid $light-gray;
@@ -128,7 +262,8 @@
     tfoot {
       tr {
         border: 1px solid $light-gray;
-        border-top: 1px solid $black;
+        border-top: 1px solid $cc-color-nero;
+        height: 40px;
 
         th,
         td {
@@ -138,6 +273,10 @@
         }
       }
     }
+  }
+
+  table.subvalues {
+    border-bottom: 0;
   }
 }
 @media only screen and (min-width: $small-breakpoint) {

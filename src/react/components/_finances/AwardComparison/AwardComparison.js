@@ -14,14 +14,20 @@ import Instructions from './Instructions';
 import Dropdowns from './Dropdowns';
 import Legend from './Legend';
 import Summary from './Summary';
+import Awards from './Awards';
 import CostOfAttendance from './CostOfAttendance';
 import Profile from './Profile';
+import './AwardComparison.scss';
 
 const propTypes = {
   dispatch: PropTypes.func.isRequired,
   currentUrl: PropTypes.string.isRequired,
   awardComparison: PropTypes.object.isRequired,
   awardComparisonSnapshot: PropTypes.object,
+};
+
+const Gap = () => {
+  return <div className="gap" />;
 };
 
 const AwardComparison = ({
@@ -40,6 +46,7 @@ const AwardComparison = ({
   const [asOfCurrentDate, setAsOfCurrentDate] = useState(null);
   const [selectedDate, setSelectedDate] = useState('X');
   const [summaryExpanded, setSummaryExpanded] = useState(true);
+  const [awardsExpanded, setAwardsExpanded] = useState(false);
   const [costExpanded, setCostExpanded] = useState(false);
   const [profileExpanded, setProfileExpanded] = useState(false);
 
@@ -116,6 +123,7 @@ const AwardComparison = ({
               {selectedDate === 'X' ||
               (aidYearSnapshot && aidYearSnapshot.loaded) ? (
                 <>
+                  <Gap />
                   <Summary
                     expanded={summaryExpanded}
                     onExpand={onExpand}
@@ -123,6 +131,15 @@ const AwardComparison = ({
                     aidYearData={currentAidYearData}
                     aidYearSnapshot={aidYearSnapshot}
                   />
+                  <Gap />
+                  <Awards
+                    expanded={awardsExpanded}
+                    onExpand={onExpand}
+                    setExpand={setAwardsExpanded}
+                    aidYearData={currentAidYearData}
+                    aidYearSnapshot={aidYearSnapshot}
+                  />
+                  <Gap />
                   <CostOfAttendance
                     expanded={costExpanded}
                     onExpand={onExpand}
@@ -130,6 +147,7 @@ const AwardComparison = ({
                     aidYearData={currentAidYearData}
                     aidYearSnapshot={aidYearSnapshot}
                   />
+                  <Gap />
                   <Profile
                     expanded={profileExpanded}
                     onExpand={onExpand}

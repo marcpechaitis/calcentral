@@ -2,20 +2,31 @@ import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import SectionHeader from './SectionHeader';
-import DollarComparisonCell from './DollarComparisonCell';
-import aidYearShape from './aidYearShape';
+import ComparisonRow from './ComparisonRow';
+import DollarComparisonRow from './DollarComparisonRow';
+import SubvaluesComparisonRow from './SubvaluesComparisonRow';
 import './AwardComparison.scss';
 
 const snapshotValueForDescription = (snapshot, description) => {
-  const { cost: { items = [] } = {} } = snapshot || {};
+  const { profile: { items = [] } = {} } = snapshot || {};
 
   const found = items.find(item => item.description === description);
   return !!found || found === 0 ? found.value : null;
 };
 
+const snapshotValuesForDescription = (snapshot, description) => {
+  const { profile: { items = [] } = {} } = snapshot || {};
+
+  const found = items.find(item => item.description === description);
+
+  // console.log(description, found);
+
+  return !!found || found === 0 ? found.subvalues : null;
+};
+
 const itemsInOneArrayButNotTheOther = (current, snapshot) => {
-  const { cost: { items: snapshotItems = [] } = {} } = snapshot || {};
-  const { cost: { items: currentItems = [] } = {} } = current || {};
+  const { profile: { items: snapshotItems = [] } = {} } = snapshot || {};
+  const { profile: { items: currentItems = [] } = {} } = current || {};
 
   const currentSet = new Set(currentItems.map(item => item.description));
   const snapshotSet = new Set(snapshotItems.map(item => item.description));
@@ -27,15 +38,18 @@ const comparer = otherArray => {
   return function(current) {
     return (
       otherArray.filter(function(other) {
-        return other.value == current.value;
+        return (
+          other.description == current.description &&
+          other.value == current.value
+        );
       }).length == 0
     );
   };
 };
 
 const countTheChanges = (current, snapshot) => {
-  const { cost: { items: currentItems = [] } = {} } = current || {};
-  const { cost: { items: snapshotItems = [] } = {} } = snapshot || {};
+  const { profile: { items: currentItems = [] } = {} } = current || {};
+  const { profile: { items: snapshotItems = [] } = {} } = snapshot || {};
 
   if (snapshotItems.length === 0) {
     return 0;
@@ -63,11 +77,9 @@ const countTheChanges = (current, snapshot) => {
   const combined = new Set(
     currentVsSnapshot.concat(snapshotVsCurrent).map(item => item.description)
   );
+  // console.log(combined);
   return combined.size;
 };
-
-const ifLoaded = (dataObj, callback) =>
-  dataObj && dataObj.loaded ? callback() : null;
 
 const Profile = ({
   expanded,
@@ -89,11 +101,6 @@ const Profile = ({
     }
   }, [aidYearSnapshot]);
 
-  aidYearData.currentComparisonData.profile.items.map(
-    item => item
-    // console.log(item)
-  );
-
   return (
     <div>
       <div className="clickable" onClick={() => onExpand(setExpand, expanded)}>
@@ -106,6 +113,37 @@ const Profile = ({
       {expanded ? (
         <div>
           <div className="container">
+            <table className="subvalues">
+              {/* <thead>
+                <tr>
+                  <th scope="col" className="columnBig">
+                    Description
+                  </th>
+                  <th scope="col" className="columnSmall">
+                    Prior Value
+                  </th>
+                  <th scope="col" className="columnSmall">
+                    Current Value
+                  </th>
+                </tr>
+              </thead> */}
+              <tbody>
+                {aidYearData.currentComparisonData.profile.items.map(item => (
+                  <Fragment key={item.description}>
+                    {item.subvalues && (
+                      <SubvaluesComparisonRow
+                        description={item.description}
+                        current={item.subvalues}
+                        snapshot={snapshotValuesForDescription(
+                          aidYearSnapshot,
+                          item.description
+                        )}
+                      />
+                    )}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
             <table>
               <thead>
                 <tr>
@@ -123,44 +161,29 @@ const Profile = ({
               <tbody>
                 {aidYearData.currentComparisonData.profile.items.map(item => (
                   <Fragment key={item.description}>
-                    <DollarComparisonCell
-                      description={item.description}
-                      current={item.value}
-                      snapshot={snapshotValueForDescription(
-                        aidYearSnapshot,
-                        item.description
-                      )}
-                    />
-                  </Fragment>
-                ))}
-                {aidYearSnapshot
-                  ? itemsInOneArrayButNotTheOther(
-                      aidYearData.currentComparisonData,
-                      aidYearSnapshot ? aidYearSnapshot : null
-                    ).map(item => (
-                      <Fragment key={item}>
-                        <DollarComparisonCell
-                          description={item}
-                          current={null}
+                    {!item.subvalues &&
+                      (typeof item.value === 'number' ? (
+                        <DollarComparisonRow
+                          description={item.description}
+                          current={item.value}
                           snapshot={snapshotValueForDescription(
                             aidYearSnapshot,
-                            item
+                            item.description
                           )}
                         />
-                      </Fragment>
-                    ))
-                  : null}
+                      ) : (
+                        <ComparisonRow
+                          description={item.description}
+                          current={item.value}
+                          snapshot={snapshotValueForDescription(
+                            aidYearSnapshot,
+                            item.description
+                          )}
+                        />
+                      ))}
+                  </Fragment>
+                ))}
               </tbody>
-              {/* <tfoot>
-                <DollarComparisonCell
-                  description="Estimated Cost of Attendance"
-                  current={aidYearData.currentComparisonData.cost.total}
-                  snapshot={ifLoaded(
-                    aidYearSnapshot,
-                    () => aidYearSnapshot.cost.total
-                  )}
-                />
-              </tfoot> */}
             </table>
           </div>
         </div>

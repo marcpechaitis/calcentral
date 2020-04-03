@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import ComparisonCell from './ComparisonCell';
+import ComparisonRow from './ComparisonRow';
 import formatCurrency from 'functions/formatCurrency';
 
 import SelectedDateContext from './SelectedDateContext';
 
 import './AwardComparison.scss';
 
-const DollarComparisonCell = ({ description, current, snapshot }) => {
+const DollarComparisonRow = ({ description, current, snapshot }) => {
   const { selectedDate: selectedDate } = useContext(SelectedDateContext);
   const formattedCurrentValue =
     current || current === 0 ? formatCurrency(current) : 'N/A';
@@ -21,7 +21,7 @@ const DollarComparisonCell = ({ description, current, snapshot }) => {
   // console.log(snapshot);
 
   return (
-    <ComparisonCell
+    <ComparisonRow
       description={description}
       current={formattedCurrentValue}
       snapshot={formattedSnapshotValue}
@@ -29,11 +29,11 @@ const DollarComparisonCell = ({ description, current, snapshot }) => {
   );
 };
 
-DollarComparisonCell.displayName = 'AwardComparisonDollarComparisonCell';
-DollarComparisonCell.propTypes = {
+DollarComparisonRow.displayName = 'AwardComparisonDollarComparisonRow';
+DollarComparisonRow.propTypes = {
   description: PropTypes.string.isRequired,
   current: PropTypes.number,
   snapshot: PropTypes.number,
 };
 
-export default DollarComparisonCell;
+export default DollarComparisonRow;

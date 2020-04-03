@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import SectionHeader from './SectionHeader';
-import DollarComparisonCell from './DollarComparisonCell';
+import DollarComparisonRow from './DollarComparisonRow';
 import './AwardComparison.scss';
 
 import aidYearShape from './aidYearShape';
@@ -16,8 +16,6 @@ const countTheChanges = (current, snapshot) => {
   const { awards: { total: snapshotAwardsTotal = 0 } = {} } = snapshot || {};
   const { cost: { total: currentCostTotal = 0 } = {} } = current || {};
   const { cost: { total: snapshotCostTotal = 0 } = {} } = snapshot || {};
-  console.log(currentAwardsTotal, snapshotAwardsTotal);
-  console.log(currentCostTotal, snapshotCostTotal);
 
   let differencesCount = 0;
   currentAwardsTotal !== snapshotAwardsTotal ? differencesCount++ : null;
@@ -76,7 +74,7 @@ const Summary = ({
                 </tr>
               </thead>
               <tbody>
-                <DollarComparisonCell
+                <DollarComparisonRow
                   description="Total Awards"
                   current={aidYearData.currentComparisonData.awards.total}
                   snapshot={ifLoaded(
@@ -84,7 +82,7 @@ const Summary = ({
                     () => aidYearSnapshot.awards.total
                   )}
                 />
-                <DollarComparisonCell
+                <DollarComparisonRow
                   description="Estimated Cost of Attendance"
                   current={aidYearData.currentComparisonData.cost.total}
                   snapshot={ifLoaded(

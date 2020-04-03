@@ -1,6 +1,7 @@
 module User
   module FinancialAid
     class CachedAwardComparisonData < UserSpecificModel
+
       include Cache::CachedFeed
       include Cache::UserCacheExpiry
       include Cache::RelatedCacheKeyTracker
@@ -17,63 +18,60 @@ module User
 
       def get_feed_internal
         {
-          awards: {
-            total: items_with_floats(awards_data).collect { |item| item['value'] }.sum,
-            items: items_with_floats(awards_data)
-          },
+          awards: awards.as_json,
           cost: {
-            total: items_with_floats(cost_data).collect { |item| item['value'] }.sum,
-            items: items_with_floats(cost_data)
+            total: items_with_floats(all_costs).collect { |item| item['value'] }.sum.to_f,
+            items: items_with_floats(all_costs)
           },
           profile: {
             items: [
               {
-                title: 'Level',
+                description: 'Level',
                 subvalues: subvaluesLevel
               },
               {
-                title: 'Enrollment',
+                description: 'Enrollment',
                 subvalues: subvaluesEnrollment
               },
               {
-                title: 'Residency',
+                description: 'Residency',
                 subvalues: subvaluesResidency
               },
               {
-                title: 'Housing',
-                subvalues: housing
+                description: 'Housing',
+                subvalues: subvaluesHousing
               },
               {
-                title: 'SHIP (Student Housing Insurance Program)',
+                description: 'SHIP (Student Housing Insurance Program)',
                 subvalues: subvaluesSHIP
               },
               {
-                title: 'SAP Status',
+                description: 'SAP Status',
                 value: snapshot_data[0].try(:[], 'sap_status')
               },
               {
-                title: 'Verification Status',
+                description: 'Verification Status',
                 value: snapshot_data[0].try(:[], 'verification_status')
               },
               {
-                title: 'Family Members in College',
+                description: 'Family Members in College',
                 value: isir.try(:[], 'family_in_college')
               },
               {
-                title: 'Estimated Graduation',
+                description: 'Estimated Graduation',
                 value: status.try(:[], 'exp_grad_term')
               },
               {
-                title: 'Dependency Status',
+                description: 'Dependency Status',
                 value: isir.try(:[], 'dependency_status')
               },
               {
-                title: 'Expected Family Contribution (EFC)',
-                value: isir.try(:[], 'primary_efc')
+                description: 'Expected Family Contribution (EFC)',
+                value: isir.try(:[], 'primary_efc').partition('$ ')[1].to_f
               },
               {
-                title: 'Berkeley Parent Contribution',
-                value: snapshot_data[0].try(:[], 'berkeley_pc')
+                description: 'Berkeley Parent Contribution',
+                value: snapshot_data[0].try(:[], 'berkeley_pc').to_f
               }
             ]
           }
@@ -86,14 +84,13 @@ module User
         end
       end
 
-      # Awards
-      def awards_data
-        @awards_data ||= Queries.get_award_comparison_awards(@uid, aid_year: @aid_year, effective_date: @effective_date)
+      def awards
+        @awards ||= Awards.new({ uid: @uid, aid_year: @aid_year, effective_date: @effective_date })
       end
 
       # Expected Cost of Attendance
-      def cost_data
-        @cost_data ||= Queries.get_award_comparison_cost(@uid, aid_year: @aid_year, effective_date: @effective_date)
+      def all_costs
+        @all_costs ||= Queries.get_award_comparison_cost(@uid, aid_year: @aid_year, effective_date: @effective_date)
       end
 
       # Profile Data
@@ -132,10 +129,8 @@ module User
       def subvaluesLevel
         @subvaluesLevel ||= level.map.try(:each) do |item|
           {
-            subvalue: [
-              item.try(:[], 'term_descr'),
-              item.try(:[], 'acad_level')
-            ]
+            term: item.try(:[], 'term_descr').partition(' ')[0],
+            value: item.try(:[], 'acad_level')
           }
         end
       end
@@ -143,10 +138,8 @@ module User
       def subvaluesEnrollment
         @subvaluesEnrollment ||= enrollment.map.try(:each) do |item|
           {
-            subvalue: [
-              item.try(:[], 'term_descr'),
-              item.try(:[], 'term_units')
-            ]
+            term: item.try(:[], 'term_descr').partition(' ')[0],
+            value: item.try(:[], 'term_units')
           }
         end
       end
@@ -154,10 +147,8 @@ module User
       def subvaluesResidency
         @subvaluesResidency ||= residency.map.try(:each) do |item|
           {
-            subvalue: [
-              item.try(:[], 'term_descr'),
-              item.try(:[], 'residency')
-            ]
+            term: item.try(:[], 'term_descr').partition(' ')[0],
+            value: item.try(:[], 'residency')
           }
         end
       end
@@ -165,10 +156,8 @@ module User
       def subvaluesHousing
         @subvaluesHousing ||= housing.map.try(:each) do |item|
           {
-            subvalue: [
-              item.try(:[], 'term_descr'),
-              item.try(:[], 'housing_option')
-            ]
+            term: item.try(:[], 'term_descr').partition(' ')[0],
+            value: item.try(:[], 'housing_option').partition('Housing - ')[2]
           }
         end
       end
@@ -176,14 +165,11 @@ module User
       def subvaluesSHIP
         @subvaluesSHIP ||= ship_status.map.try(:each) do |item|
           {
-            subvalue: [
-              item.try(:[], 'term_descr'),
-              item.try(:[], 'ship_status')
-            ]
+            term: item.try(:[], 'term_descr').partition(' ')[0],
+            value: item.try(:[], 'ship_status')
           }
         end
       end
-
     end
   end
 end

@@ -6,7 +6,7 @@ import OrangeChangedIcon from '../../Icon/OrangeChangedIcon';
 
 import './AwardComparison.scss';
 
-const ComparisonCell = ({ description, current, snapshot }) => {
+const ComparisonRow = ({ description, current, snapshot }) => {
   const { selectedDate: selectedDate } = useContext(SelectedDateContext);
   const sameValues =
     (snapshot === null && selectedDate === 'X') || current === snapshot
@@ -17,25 +17,31 @@ const ComparisonCell = ({ description, current, snapshot }) => {
     ? 'valueCell'
     : 'valueCell valueCellChanged valueCellIcon';
 
+  // console.log(description, current, snapshot);
+
   return (
-    <tr key={description}>
-      <th scope="row">{description}</th>
-      <td className={cellStyle}>{snapshot}</td>
+    <tr key={description} className="awardRow">
+      <th scope="row" className="valueDescription">
+        {description}
+      </th>
+      <td className={cellStyle}>
+        {snapshot || selectedDate === 'X' ? snapshot : 'N/A'}
+      </td>
       <td className={cellWithIconStyle}>
         {!sameValues && (
           <OrangeChangedIcon className="hideSmallFormFactor icon" />
         )}
-        {current}
+        {current ? current : 'N/A'}
       </td>
     </tr>
   );
 };
 
-ComparisonCell.displayName = 'AwardComparisonComparisonCell';
-ComparisonCell.propTypes = {
+ComparisonRow.displayName = 'AwardComparisonComparisonRow';
+ComparisonRow.propTypes = {
   description: PropTypes.string.isRequired,
   current: PropTypes.string,
   snapshot: PropTypes.string,
 };
 
-export default ComparisonCell;
+export default ComparisonRow;

@@ -7,19 +7,34 @@ import aidYearShape from './aidYearShape';
 import './AwardComparison.scss';
 
 const snapshotValueForDescription = (snapshot, description) => {
-  const { cost: { items = [] } = {} } = snapshot || {};
-
-  const found = items.find(item => item.description === description);
+  const { awards: { awardTypes = [] } = {} } = snapshot || {};
+  const mergedItems = [];
+  awardTypes.map(awardType => {
+    awardType.items.map(item => mergedItems.push(item));
+  });
+  const found = mergedItems.find(item => item.description === description);
   return !!found || found === 0 ? found.value : null;
 };
 
 const itemsInOneArrayButNotTheOther = (current, snapshot) => {
-  const { cost: { items: snapshotItems = [] } = {} } = snapshot || {};
-  const { cost: { items: currentItems = [] } = {} } = current || {};
+  const { awards: { awardTypes: currentAwardTypes = [] } = {} } = current || {};
+  const mergedCurrentItems = [];
+  currentAwardTypes.map(currentAwardType => {
+    currentAwardType.items.map(item => mergedCurrentItems.push(item));
+  });
 
-  const currentSet = new Set(currentItems.map(item => item.description));
-  const snapshotSet = new Set(snapshotItems.map(item => item.description));
+  const { awards: { awardTypes: snapshotAwardTypes = [] } = {} } =
+    snapshot || {};
+  const mergedSnapshotItems = [];
+  snapshotAwardTypes.map(snapshotAwardType => {
+    snapshotAwardType.items.map(item => mergedSnapshotItems.push(item));
+  });
+  const currentSet = new Set(mergedCurrentItems.map(item => item.description));
+  const snapshotSet = new Set(
+    mergedSnapshotItems.map(item => item.description)
+  );
   const difference = new Set([...snapshotSet].filter(x => !currentSet.has(x)));
+
   return Array.from(difference);
 };
 
@@ -37,27 +52,38 @@ const comparer = otherArray => {
 };
 
 const countTheChanges = (current, snapshot) => {
-  const { cost: { items: currentItems = [] } = {} } = current || {};
-  const { cost: { items: snapshotItems = [] } = {} } = snapshot || {};
+  const { awards: { awardTypes: currentAwardTypes = [] } = {} } = current || {};
+  const mergedCurrentItems = [];
+  currentAwardTypes.map(currentAwardType => {
+    currentAwardType.items.map(item => mergedCurrentItems.push(item));
+  });
 
-  if (snapshotItems.length === 0) {
+  const { awards: { awardTypes: snapshotAwardTypes = [] } = {} } =
+    snapshot || {};
+  const mergedSnapshotItems = [];
+  snapshotAwardTypes.map(snapshotAwardType => {
+    snapshotAwardType.items.map(item => mergedSnapshotItems.push(item));
+  });
+
+  if (mergedSnapshotItems.length === 0) {
     return 0;
   }
 
   // identify current items that are different or not in the snapshot
-  const onlyInA = currentItems.filter(comparer(snapshotItems));
+  const onlyInA = mergedCurrentItems.filter(comparer(mergedSnapshotItems));
   const onlyInB = itemsInOneArrayButNotTheOther(
-    currentItems,
-    snapshotItems
-  ).filter(comparer(currentItems));
+    mergedCurrentItems,
+    mergedSnapshotItems
+  ).filter(comparer(mergedCurrentItems));
+
   const currentVsSnapshot = onlyInA.concat(onlyInB);
 
   // identify snapshot items that are different or not in the current
-  const onlyInA2 = snapshotItems.filter(comparer(currentItems));
+  const onlyInA2 = mergedSnapshotItems.filter(comparer(mergedCurrentItems));
   const onlyInB2 = itemsInOneArrayButNotTheOther(
-    snapshotItems,
-    currentItems
-  ).filter(comparer(snapshotItems));
+    mergedSnapshotItems,
+    mergedCurrentItems
+  ).filter(comparer(mergedSnapshotItems));
 
   const snapshotVsCurrent = onlyInB2.concat(onlyInA2);
 
@@ -66,13 +92,14 @@ const countTheChanges = (current, snapshot) => {
   const combined = new Set(
     currentVsSnapshot.concat(snapshotVsCurrent).map(item => item.description)
   );
+
   return combined.size;
 };
 
 const ifLoaded = (dataObj, callback) =>
   dataObj && dataObj.loaded ? callback() : null;
 
-const CostOfAttendance = ({
+const Awards = ({
   expanded,
   onExpand,
   setExpand,
@@ -97,7 +124,7 @@ const CostOfAttendance = ({
       <div className="clickable" onClick={() => onExpand(setExpand, expanded)}>
         <SectionHeader
           expanded={expanded}
-          label="Estimated Cost of Attendance"
+          label="Awards"
           numberOfChanges={numberOfChanges}
         />
       </div>
@@ -119,18 +146,33 @@ const CostOfAttendance = ({
                 </tr>
               </thead>
               <tbody>
-                {aidYearData.currentComparisonData.cost.items.map(item => (
-                  <Fragment key={item.description}>
-                    <DollarComparisonRow
-                      description={item.description}
-                      current={item.value}
-                      snapshot={snapshotValueForDescription(
-                        aidYearSnapshot,
-                        item.description
-                      )}
-                    />
-                  </Fragment>
-                ))}
+                {aidYearData.currentComparisonData.awards.awardTypes.map(
+                  awardType => (
+                    <Fragment key={awardType.type}>
+                      <>
+                        <tr className="typeRow">
+                          <th className="typeTitle" scope="row">
+                            {awardType.description}
+                          </th>
+                        </tr>
+                      </>
+                      <>
+                        {awardType.items.map(award => (
+                          <Fragment key={award.description}>
+                            <DollarComparisonRow
+                              description={award.description}
+                              current={award.value}
+                              snapshot={snapshotValueForDescription(
+                                aidYearSnapshot,
+                                award.description
+                              )}
+                            />
+                          </Fragment>
+                        ))}
+                      </>
+                    </Fragment>
+                  )
+                )}
                 {aidYearSnapshot
                   ? itemsInOneArrayButNotTheOther(
                       aidYearData.currentComparisonData,
@@ -151,11 +193,11 @@ const CostOfAttendance = ({
               </tbody>
               <tfoot>
                 <DollarComparisonRow
-                  description="Estimated Cost of Attendance"
-                  current={aidYearData.currentComparisonData.cost.total}
+                  description="Total Awards"
+                  current={aidYearData.currentComparisonData.awards.total}
                   snapshot={ifLoaded(
                     aidYearSnapshot,
-                    () => aidYearSnapshot.cost.total
+                    () => aidYearSnapshot.awards.total
                   )}
                 />
               </tfoot>
@@ -169,8 +211,8 @@ const CostOfAttendance = ({
   );
 };
 
-CostOfAttendance.displayName = 'CostOfAttendance';
-CostOfAttendance.propTypes = {
+Awards.displayName = 'Awards';
+Awards.propTypes = {
   expanded: PropTypes.bool.isRequired,
   onExpand: PropTypes.func.isRequired,
   setExpand: PropTypes.func.isRequired,
@@ -178,4 +220,4 @@ CostOfAttendance.propTypes = {
   aidYearSnapshot: PropTypes.object,
 };
 
-export default CostOfAttendance;
+export default Awards;

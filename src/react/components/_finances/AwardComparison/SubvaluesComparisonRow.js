@@ -17,10 +17,8 @@ const SubvaluesComparisonRow = ({ description, current, snapshot }) => {
       ? new Set(currentTerms.concat(snapshotTerms))
       : new Set(currentTerms);
 
-    const mergedItems = [];
-
-    Array.from(combinedTerms).map(term => {
-      mergedItems.push({
+    return Array.from(combinedTerms).map(term => {
+      return {
         term: term,
         currentValue:
           current && current.find(item => item.term === term)
@@ -32,10 +30,8 @@ const SubvaluesComparisonRow = ({ description, current, snapshot }) => {
             : snapshot && snapshot.find(item => item.term === term)
             ? snapshot.find(item => item.term === term).value
             : 'N/A',
-      });
+      };
     });
-
-    return mergedItems;
   };
 
   const cellStyle = (x, y) => {

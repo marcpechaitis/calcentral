@@ -7,6 +7,8 @@ import DollarComparisonRow from './DollarComparisonRow';
 import SubvaluesComparisonRow from './SubvaluesComparisonRow';
 import './AwardComparison.scss';
 
+import { differencesBetween } from './Profile.module';
+
 const snapshotValueForDescription = (snapshot, description) => {
   const { profile: { items = [] } = {} } = snapshot || {};
 
@@ -19,32 +21,7 @@ const snapshotValuesForDescription = (snapshot, description) => {
 
   const found = items.find(item => item.description === description);
 
-  // console.log(description, found);
-
   return !!found || found === 0 ? found.subvalues : null;
-};
-
-const itemsInOneArrayButNotTheOther = (current, snapshot) => {
-  const { profile: { items: snapshotItems = [] } = {} } = snapshot || {};
-  const { profile: { items: currentItems = [] } = {} } = current || {};
-
-  const currentSet = new Set(currentItems.map(item => item.description));
-  const snapshotSet = new Set(snapshotItems.map(item => item.description));
-  const difference = new Set([...snapshotSet].filter(x => !currentSet.has(x)));
-  return Array.from(difference);
-};
-
-const comparer = otherArray => {
-  return function(current) {
-    return (
-      otherArray.filter(function(other) {
-        return (
-          other.description == current.description &&
-          other.value == current.value
-        );
-      }).length == 0
-    );
-  };
 };
 
 const countTheChanges = (current, snapshot) => {
@@ -55,30 +32,7 @@ const countTheChanges = (current, snapshot) => {
     return 0;
   }
 
-  // identify current items that are different or not in the snapshot
-  const onlyInA = currentItems.filter(comparer(snapshotItems));
-  const onlyInB = itemsInOneArrayButNotTheOther(
-    currentItems,
-    snapshotItems
-  ).filter(comparer(currentItems));
-  const currentVsSnapshot = onlyInA.concat(onlyInB);
-
-  // identify snapshot items that are different or not in the current
-  const onlyInA2 = snapshotItems.filter(comparer(currentItems));
-  const onlyInB2 = itemsInOneArrayButNotTheOther(
-    snapshotItems,
-    currentItems
-  ).filter(comparer(snapshotItems));
-
-  const snapshotVsCurrent = onlyInB2.concat(onlyInA2);
-
-  // the following takes the two sets of differences, combines them
-  // and removes duplicates (remember, Sets contain unique values)
-  const combined = new Set(
-    currentVsSnapshot.concat(snapshotVsCurrent).map(item => item.description)
-  );
-  // console.log(combined);
-  return combined.size;
+  return differencesBetween(currentItems)(snapshotItems);
 };
 
 const Profile = ({
